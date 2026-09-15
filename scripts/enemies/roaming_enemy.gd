@@ -1,8 +1,18 @@
-class_name SlimeEnemy
+class_name RoamingEnemy
 extends CharacterBody2D
 
+@export var sprite_sheet: Texture2D
+@export var frame_size: Vector2i = Vector2i(32, 32)
+@export_range(1, 16, 1) var frame_columns: int = 1
+@export_range(0, 16, 1) var animation_row: int = 0
+@export var directional_rows: bool = false
+@export_range(0, 16, 1) var row_up: int = 0
+@export_range(0, 16, 1) var row_right: int = 1
+@export_range(0, 16, 1) var row_down: int = 2
+@export_range(0, 16, 1) var row_left: int = 3
+@export var animation_fps: float = 8.0
 @export var speed: float = 26.0
-@export var chase_speed: float = 34.0
+@export var chase_speed: float = 36.0
 @export var chase_range: float = 80.0
 @export var health: int = 3
 @export var contact_damage: int = 1
@@ -14,14 +24,10 @@ extends CharacterBody2D
 @onready var health_dropper: HealthDropper = $HealthDropper
 
 const MOVEMENT_COLLISION_MASK: int = (1 << 0) | (1 << 1) | (1 << 2)
-const FRAME_SIZE: Vector2i = Vector2i(64, 64)
-const IDLE_SHEET: String = "res://assets/art/enemies/slime1/Idle/Slime1_Idle_full.png"
-const WALK_SHEET: String = "res://assets/art/enemies/slime1/Walk/Slime1_Walk_full.png"
-const DEATH_SHEET: String = "res://assets/art/enemies/slime1/Death/Slime1_Death_full.png"
-const DIRECTIONS: Array[String] = ["down", "up", "right", "left"]
 const CONTACT_DISTANCE: float = 16.0
 const CONTACT_COOLDOWN: float = 0.8
 const HURT_DURATION: float = 0.14
+const DEATH_DURATION: float = 0.12
 
 var _target: Player = null
 var _move_direction: Vector2 = Vector2.ZERO
@@ -39,9 +45,8 @@ func _ready() -> void:
 	collision_mask = MOVEMENT_COLLISION_MASK
 	_random.randomize()
 	animated_sprite.sprite_frames = _build_sprite_frames()
-	animated_sprite.animation_finished.connect(_on_animation_finished)
 	_pick_wander_direction()
-	animated_sprite.play("idle_down")
+	_update_animation()
 
 
 func _physics_process(delta: float) -> void:
@@ -56,12 +61,10 @@ func _physics_process(delta: float) -> void:
 		if _hurt_timer <= 0.0:
 			animated_sprite.modulate = Color.WHITE
 		return
-
 	_target = _find_player()
 	var distance_to_player := INF
 	if _target != null:
 		distance_to_player = global_position.distance_to(_target.global_position)
-
 	if distance_to_player <= chase_range:
 		_move_direction = global_position.direction_to(_target.global_position)
 		velocity = _move_direction * chase_speed
@@ -70,7 +73,6 @@ func _physics_process(delta: float) -> void:
 		if _wander_timer <= 0.0:
 			_pick_wander_direction()
 		velocity = _move_direction * speed
-
 	move_and_slide()
 	_update_facing()
 	_update_animation()
@@ -84,8 +86,7 @@ func _pick_wander_direction() -> void:
 	if _random.randf() < 0.2:
 		_move_direction = Vector2.ZERO
 		return
-	var angle := _random.randf_range(0.0, TAU)
-	_move_direction = Vector2.from_angle(angle)
+	_move_direction = Vector2.from_angle(_random.randf_range(0.0, TAU))
 
 
 func _update_facing() -> void:
@@ -95,11 +96,12 @@ func _update_facing() -> void:
 		_facing = "right" if _move_direction.x > 0.0 else "left"
 	else:
 		_facing = "down" if _move_direction.y > 0.0 else "up"
+	if not directional_rows:
+		animated_sprite.flip_h = _move_direction.x < 0.0
 
 
 func _update_animation() -> void:
-	var prefix := "idle" if velocity.length_squared() < 1.0 else "walk"
-	var animation_name := prefix + "_" + _facing
+	var animation_name := "move_" + _facing if directional_rows else "move"
 	if animated_sprite.animation != animation_name:
 		animated_sprite.play(animation_name)
 
@@ -116,10 +118,7 @@ func take_damage(amount: int, source: Vector2, knockback: float) -> void:
 		return
 	health -= amount
 	if health <= 0:
-		_dying = true
-		health_dropper.try_drop(global_position, get_parent())
-		collision_shape.set_deferred("disabled", true)
-		animated_sprite.play("death_" + _facing)
+		_die()
 		return
 	var direction := source.direction_to(global_position)
 	if direction == Vector2.ZERO:
@@ -129,30 +128,38 @@ func take_damage(amount: int, source: Vector2, knockback: float) -> void:
 	animated_sprite.modulate = Color("ff8888")
 
 
+func _die() -> void:
+	_dying = true
+	health_dropper.try_drop(global_position, get_parent())
+	collision_shape.set_deferred("disabled", true)
+	var tween := create_tween()
+	tween.tween_property(self, "scale", Vector2.ZERO, DEATH_DURATION)
+	tween.finished.connect(queue_free)
+
+
 func _build_sprite_frames() -> SpriteFrames:
 	var frames := SpriteFrames.new()
 	frames.remove_animation("default")
-	var idle_texture := load(IDLE_SHEET) as Texture2D
-	var walk_texture := load(WALK_SHEET) as Texture2D
-	var death_texture := load(DEATH_SHEET) as Texture2D
-	for row in range(DIRECTIONS.size()):
-		_add_sheet_animation(frames, "idle_" + DIRECTIONS[row], idle_texture, row, 6, 6.0, true)
-		_add_sheet_animation(frames, "walk_" + DIRECTIONS[row], walk_texture, row, 8, 10.0, true)
-		_add_sheet_animation(frames, "death_" + DIRECTIONS[row], death_texture, row, 10, 12.0, false)
+	if sprite_sheet == null:
+		return frames
+	if directional_rows:
+		_add_animation(frames, "move_up", row_up)
+		_add_animation(frames, "move_right", row_right)
+		_add_animation(frames, "move_down", row_down)
+		_add_animation(frames, "move_left", row_left)
+	else:
+		_add_animation(frames, "move", animation_row)
 	return frames
 
 
-func _add_sheet_animation(frames: SpriteFrames, animation_name: String, texture: Texture2D, row: int, columns: int, fps: float, loop: bool) -> void:
+func _add_animation(frames: SpriteFrames, animation_name: String, row: int) -> void:
 	frames.add_animation(animation_name)
+	var available_columns := int(sprite_sheet.get_width()) / frame_size.x
+	var columns := mini(frame_columns, available_columns)
 	for column in range(columns):
 		var atlas := AtlasTexture.new()
-		atlas.atlas = texture
-		atlas.region = Rect2(column * FRAME_SIZE.x, row * FRAME_SIZE.y, FRAME_SIZE.x, FRAME_SIZE.y)
+		atlas.atlas = sprite_sheet
+		atlas.region = Rect2(column * frame_size.x, row * frame_size.y, frame_size.x, frame_size.y)
 		frames.add_frame(animation_name, atlas)
-	frames.set_animation_speed(animation_name, fps)
-	frames.set_animation_loop(animation_name, loop)
-
-
-func _on_animation_finished() -> void:
-	if _dying and animated_sprite.animation.begins_with("death_"):
-		queue_free()
+	frames.set_animation_speed(animation_name, animation_fps)
+	frames.set_animation_loop(animation_name, true)

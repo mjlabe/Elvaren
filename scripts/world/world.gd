@@ -3,15 +3,24 @@ extends Node2D
 
 @export var player_scene: PackedScene
 @export var area_scene: PackedScene
-@export var enemy_scene: PackedScene
 @export var start_area: Vector2i = Vector2i(3, 6)
 
 const MAP_GRID_SIZE: Vector2i = Vector2i(8, 8)
 const AREA_WIDTH: float = 384.0
 const AREA_HEIGHT: float = 288.0
 const WORLD_SEED: int = 81473
+const TRANSITION_COOLDOWN: float = 0.15
+const MIN_ENEMY_OBSTACLE_DISTANCE_SQUARED: float = 28.0 * 28.0
+const MIN_ENEMY_SEPARATION_SQUARED: float = 32.0 * 32.0
 const DUNGEON_AREA: Vector2i = Vector2i(4, 5)
 const DUNGEON_SCENE: String = "res://scenes/props/dungeon_entrance.tscn"
+const ENEMY_SCENES: Dictionary = {
+	"slime": "res://scenes/enemies/slime.tscn",
+	"bat": "res://scenes/enemies/bat.tscn",
+	"snake": "res://scenes/enemies/snake.tscn",
+	"skeleton": "res://scenes/enemies/skeleton.tscn",
+	"sand_worm": "res://scenes/enemies/sand_worm.tscn"
+}
 
 var _map: Dictionary = {}
 var _player: Player = null
@@ -49,6 +58,7 @@ func _generate_area_data(coords: Vector2i) -> Dictionary:
 	var random := RandomNumberGenerator.new()
 	random.seed = WORLD_SEED + coords.x * 73856093 + coords.y * 19349663
 	var waters := _generate_waters(biome, coords)
+	var obstacles := _generate_obstacles(biome, waters, random)
 	var data := {
 		"name": _get_area_name(biome, coords),
 		"biome": biome,
@@ -56,8 +66,8 @@ func _generate_area_data(coords: Vector2i) -> Dictionary:
 		"path_color": palette["path"],
 		"paths": [Rect2(0, 128, 384, 32), Rect2(176, 0, 32, 288)],
 		"waters": waters,
-		"obstacles": _generate_obstacles(biome, waters, random),
-		"enemies": _generate_enemy_positions(biome, waters, random)
+		"obstacles": obstacles,
+		"enemies": _generate_enemy_spawns(biome, waters, obstacles, random)
 	}
 	if coords == DUNGEON_AREA:
 		data["name"] = "Thornveil Gate"
@@ -139,12 +149,52 @@ func _generate_obstacles(biome: String, waters: Array[Rect2], random: RandomNumb
 	return obstacles
 
 
-func _generate_enemy_positions(biome: String, waters: Array[Rect2], random: RandomNumberGenerator) -> Array[Vector2]:
-	var positions: Array[Vector2] = []
+func _generate_enemy_spawns(biome: String, waters: Array[Rect2], obstacles: Array[Dictionary], random: RandomNumberGenerator) -> Array[Dictionary]:
+	var spawns: Array[Dictionary] = []
+	var pool := _get_enemy_pool(biome)
 	var count := 5 if biome == "forest" or biome == "swamp" else 3
+	var pool_offset := random.randi_range(0, pool.size() - 1)
 	for index in range(count):
-		positions.append(_random_clear_position(waters, random, false))
-	return positions
+		var enemy_type := pool[(pool_offset + index) % pool.size()]
+		spawns.append({
+			"scene": ENEMY_SCENES[enemy_type],
+			"position": _random_enemy_position(waters, obstacles, spawns, random)
+		})
+	return spawns
+
+
+func _random_enemy_position(waters: Array[Rect2], obstacles: Array[Dictionary], existing_spawns: Array[Dictionary], random: RandomNumberGenerator) -> Vector2:
+	for attempt in range(64):
+		var position_value := _random_clear_position(waters, random, false)
+		var blocked := false
+		for obstacle in obstacles:
+			if str(obstacle.get("type", "")) == "flower":
+				continue
+			var obstacle_position: Vector2 = obstacle.get("position", Vector2.ZERO)
+			if position_value.distance_squared_to(obstacle_position) < MIN_ENEMY_OBSTACLE_DISTANCE_SQUARED:
+				blocked = true
+				break
+		if blocked:
+			continue
+		for spawn in existing_spawns:
+			var spawn_position: Vector2 = spawn.get("position", Vector2.ZERO)
+			if position_value.distance_squared_to(spawn_position) < MIN_ENEMY_SEPARATION_SQUARED:
+				blocked = true
+				break
+		if not blocked:
+			return position_value
+	return Vector2(AREA_WIDTH / 2.0, AREA_HEIGHT / 2.0)
+
+
+func _get_enemy_pool(biome: String) -> Array[String]:
+	match biome:
+		"forest": return ["slime", "snake", "skeleton", "bat"]
+		"desert": return ["sand_worm", "snake", "skeleton"]
+		"coast": return ["slime", "bat", "skeleton"]
+		"swamp": return ["slime", "snake", "bat", "skeleton"]
+		"snow": return ["skeleton", "bat", "slime"]
+		"highland": return ["skeleton", "bat", "snake"]
+		_: return ["slime", "bat", "snake"]
 
 
 func _random_clear_position(waters: Array[Rect2], random: RandomNumberGenerator, avoid_paths: bool) -> Vector2:
@@ -175,7 +225,7 @@ func _load_area(coords: Vector2i, from_direction: Vector2i) -> void:
 		_transitioning = false
 		return
 	var area_data: Dictionary = _map[coords]
-	_current_area.configure(coords, area_data, enemy_scene)
+	_current_area.configure(coords, area_data)
 	_current_area.transition_requested.connect(_on_transition)
 	add_child(_current_area)
 	move_child(_current_area, 0)
@@ -198,6 +248,13 @@ func _load_area(coords: Vector2i, from_direction: Vector2i) -> void:
 	GameState.set_flag("visited_%d_%d" % [coords.x, coords.y], true)
 	if HUD.has_method("show_area_name"):
 		HUD.show_area_name(str(area_data.get("name", "Elvaren")), coords, MAP_GRID_SIZE)
+	if from_direction == Vector2i.ZERO:
+		_transitioning = false
+	else:
+		get_tree().create_timer(TRANSITION_COOLDOWN).timeout.connect(_finish_transition)
+
+
+func _finish_transition() -> void:
 	_transitioning = false
 
 
@@ -205,4 +262,4 @@ func _on_transition(to_grid: Vector2i, from_direction: Vector2i) -> void:
 	if _transitioning or not _map.has(to_grid):
 		return
 	_transitioning = true
-	_load_area(to_grid, from_direction)
+	call_deferred("_load_area", to_grid, from_direction)

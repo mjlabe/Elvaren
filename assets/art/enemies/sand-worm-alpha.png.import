@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://budnoinjojnmt"
-path="res://.godot/imported/ghost.png-14584df2f10b31391930d07c393eec80.ctex"
+uid="uid://ituovfanto5n"
+path="res://.godot/imported/sand-worm-alpha.png-d8ee8928038f840f2c74e05dd2deb5b1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/ghost.png"
-dest_files=["res://.godot/imported/ghost.png-14584df2f10b31391930d07c393eec80.ctex"]
+source_file="res://assets/art/enemies/sand-worm-alpha.png"
+dest_files=["res://.godot/imported/sand-worm-alpha.png-d8ee8928038f840f2c74e05dd2deb5b1.ctex"]
 
 [params]
 

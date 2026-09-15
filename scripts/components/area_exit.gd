@@ -17,4 +17,6 @@ func _on_body_entered(body: Node) -> void:
 	if not enabled:
 		return
 	if body.is_in_group("player"):
+		enabled = false
+		set_deferred("monitoring", false)
 		player_exited.emit(direction)

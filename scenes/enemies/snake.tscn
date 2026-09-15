@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/roaming_enemy.gd" id="1_enemy"]
+[ext_resource type="Texture2D" path="res://assets/art/enemies/redshrike-bonio-alpha.png" id="2_texture"]
+[ext_resource type="Script" path="res://scripts/components/health_dropper.gd" id="3_dropper"]
+[ext_resource type="PackedScene" path="res://scenes/props/health_pickup.tscn" id="4_health"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_snake"]
+radius = 6.0
+height = 14.0
+
+[node name="Snake" type="CharacterBody2D" groups=["enemy", "snake"]]
+collision_layer = 4
+collision_mask = 7
+motion_mode = 1
+script = ExtResource("1_enemy")
+sprite_sheet = ExtResource("2_texture")
+frame_size = Vector2i(32, 32)
+frame_columns = 4
+animation_row = 0
+animation_fps = 8.0
+speed = 28.0
+chase_speed = 40.0
+chase_range = 88.0
+health = 2
+
+[node name="Shadow" type="Polygon2D" parent="."]
+position = Vector2(0, 7)
+color = Color(0.05, 0.08, 0.06, 0.3)
+polygon = PackedVector2Array(-7, 0, -4, -2, 4, -2, 7, 0, 4, 2, -4, 2)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -5)
+scale = Vector2(0.8, 0.8)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
+shape = SubResource("CapsuleShape2D_snake")
+
+[node name="HealthDropper" type="Node" parent="."]
+script = ExtResource("3_dropper")
+drop_chance = 0.25
+pickup_scene = ExtResource("4_health")

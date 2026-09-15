@@ -11,16 +11,14 @@ const GROUND_LIGHTEN: float = 0.035
 
 var grid_position: Vector2i = Vector2i.ZERO
 var _area_data: Dictionary = {}
-var _enemy_scene: PackedScene
 var _exits: Array[AreaExit] = []
 var _spawns: Dictionary = {}
 var _open_exits: Dictionary = {}
 
 
-func configure(coords: Vector2i, area_data: Dictionary, enemy_scene: PackedScene) -> void:
+func configure(coords: Vector2i, area_data: Dictionary) -> void:
 	grid_position = coords
 	_area_data = area_data
-	_enemy_scene = enemy_scene
 
 
 func _ready() -> void:
@@ -154,11 +152,15 @@ func _build_obstacle_collisions() -> void:
 		if obstacle_type == "flower":
 			continue
 		var obstacle_position: Vector2 = obstacle_data.get("position", Vector2.ZERO)
-		var size := Vector2(16, 12)
-		if obstacle_type == "shrub":
-			size = Vector2(20, 12)
-		elif obstacle_type == "pine" or obstacle_type == "cactus" or obstacle_type == "dead_tree":
-			size = Vector2(14, 16)
+		var size := Vector2(20, 20)
+		if obstacle_type == "rock":
+			size = Vector2(20, 18)
+		elif obstacle_type == "shrub":
+			size = Vector2(22, 16)
+		elif obstacle_type == "pine":
+			size = Vector2(20, 22)
+		elif obstacle_type == "cactus" or obstacle_type == "dead_tree":
+			size = Vector2(18, 22)
 		_add_collision_body(obstacles_root, Rect2(obstacle_position - size / 2.0, size))
 	for water_rect in _area_data.get("waters", []):
 		_add_collision_body(obstacles_root, water_rect)
@@ -192,13 +194,15 @@ func _spawn_dungeon() -> void:
 
 
 func _spawn_enemies() -> void:
-	if _enemy_scene == null:
-		return
-	for enemy_position in _area_data.get("enemies", []):
-		var enemy := _enemy_scene.instantiate() as Node2D
+	for enemy_data in _area_data.get("enemies", []):
+		var scene_path := str(enemy_data.get("scene", ""))
+		var enemy_scene := load(scene_path) as PackedScene
+		if enemy_scene == null:
+			continue
+		var enemy := enemy_scene.instantiate() as Node2D
 		if enemy == null:
 			continue
-		enemy.position = enemy_position
+		enemy.position = enemy_data.get("position", SCREEN_SIZE / 2.0)
 		get_node("Actors").add_child(enemy)
 
 

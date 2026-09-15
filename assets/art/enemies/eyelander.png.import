@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ciycgccbdi6s5"
-path="res://.godot/imported/calciumtrice-emceeflesher-worm-alpha.png-6ef3934f15bb27c296bc3e21fbdcfeea.ctex"
+uid="uid://brghisiq110dy"
+path="res://.godot/imported/eyelander.png-82e403c0fd63f9eb6b74acdfdb818ac1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/enemies/calciumtrice-emceeflesher-worm-alpha.png"
-dest_files=["res://.godot/imported/calciumtrice-emceeflesher-worm-alpha.png-6ef3934f15bb27c296bc3e21fbdcfeea.ctex"]
+source_file="res://assets/art/enemies/eyelander.png"
+dest_files=["res://.godot/imported/eyelander.png-82e403c0fd63f9eb6b74acdfdb818ac1.ctex"]
 
 [params]
 

@@ -1,6 +1,8 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/slime.gd" id="1_slime"]
+[ext_resource type="Script" path="res://scripts/components/health_dropper.gd" id="2_dropper"]
+[ext_resource type="PackedScene" path="res://scenes/props/health_pickup.tscn" id="3_health"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_slime"]
 radius = 6.0
@@ -8,7 +10,7 @@ height = 12.0
 
 [node name="Slime" type="CharacterBody2D" groups=["enemy"]]
 collision_layer = 4
-collision_mask = 3
+collision_mask = 7
 motion_mode = 1
 script = ExtResource("1_slime")
 
@@ -23,3 +25,8 @@ position = Vector2(0, -7)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 3)
 shape = SubResource("CapsuleShape2D_slime")
+
+[node name="HealthDropper" type="Node" parent="."]
+script = ExtResource("2_dropper")
+drop_chance = 0.25
+pickup_scene = ExtResource("3_health")

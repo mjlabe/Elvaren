@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-A top-down 16-bit action/puzzle/RPG inspired by *The Legend of Zelda: A Link to the Past*. Set in the land of **Elvaren**, an evil **ghoul from the north** has corrupted eight kingdoms and imprisoned **eight maidens**. Each maiden carries the **crystal of the next realm**. The hero wields a sword as his main weapon and finds a **new secondary weapon** in each dungeon to defeat that realm's boss and free the maiden. The final captive is the **princess**, who the hero grew up with and never knew was royalty; the ghoul holds her in his northern citadel.
+A top-down 16-bit action/puzzle/RPG with exploration, combat, and item-gated progression. Set in the land of **Elvaren**, an evil **ghoul from the north** has corrupted eight kingdoms and imprisoned **eight maidens**. Each maiden carries the **crystal of the next realm**. The hero wields a sword as his main weapon and finds a **new secondary weapon** in each dungeon to defeat that realm's boss and free the maiden. The final captive is the **princess**, who the hero grew up with and never knew was royalty; the ghoul holds her in his northern citadel.
 
 ## Purpose of this File
 
@@ -17,7 +17,7 @@ This is the living design document **and** agent instruction set. It is the sour
 
 ## Design Pillars
 
-- **Zelda-style progression:** Linear, item-gated dungeons; each dungeon gives a new **secondary weapon** and a **crystal** (from the rescued maiden) that open the next overworld area and solve new puzzles.
+- **Item-gated progression:** Linear dungeons; each dungeon gives a new **secondary weapon** and a **crystal** (from the rescued maiden) that open the next overworld area and solve new puzzles.
 - **Top-down with slight angle:** 2D movement, `YSort`/depth, 8-directional art and animation.
 - **16-bit pixel art:** Low base resolution, SNES-like color palette, tile-based world.
 - **Feel first:** Combat and movement must be snappy and responsive; puzzles are concise and room-based.
@@ -91,6 +91,7 @@ res://
 ## Design Conventions
 
 - **Health:** 1 heart = 4 mini-units. Player starts with 3 hearts (12 units).
+- **Enemy loot:** Every defeated combat enemy has an independent 25% chance to drop a health pickup. The default pickup restores 1 heart (4 mini-units) and disappears after 10 seconds. Use the shared `HealthDropper` component and exported values for per-enemy overrides.
 - **Combat:** Sword is the main weapon. Sword slash has a short arc, slight hitstop, knockback. Enemies flash and bounce back. Secondary weapons (items) are equipped and used with a dedicated button.
 - **Items:** Items are `Resource` files. Equippable items go in a hotbar; key items are tracked in `GameState` flags.
 - **Save/Load:** JSON in `user://` via `SaveManager`. Stores inventory, flags, health, position, current scene.
@@ -99,12 +100,17 @@ res://
 - **Rooms:** Dungeons are built from reusable 16×16 tiles with 1-tile-thick walls and clear doorways.
 - **Overworld:** The high-level map is an 8×8 grid of 64 screen-sized regions. Each region occupies one 384×288 gameplay screen, uses a 24×18 grid of 16×16 base tiles, and transitions at aligned edge passages.
 - **Generation:** Overworld regions are deterministic from a fixed seed. Biomes, water, roads, obstacles, and enemy positions remain stable across visits and saved games; story landmarks are authored prefabs layered into generated regions.
+- **Enemy variety:** Every overworld screen contains a deterministic mixture of at least three enemy archetypes rather than a single repeated type. Meadows use blobs, bats, and snakes; forests add skeletons; deserts emphasize sandworms, snakes, and skeletons; coasts mix blobs, bats, and skeletons; swamps mix blobs, snakes, bats, and skeletons; northern snow/highland regions emphasize skeletons and bats.
+- **Enemy architecture:** Shared wandering, chase, contact-damage, knockback, death, and health-drop behavior belongs in `RoamingEnemy`. Individual enemy scenes configure sprite-sheet layout and combat tuning.
+- **Enemy collision:** Every enemy archetype, including flying silhouettes such as bats, collides with the World and Player physics layers. Enemies cannot pass through trees, rocks, shrubs, water boundaries, walls, closed doors, or one another.
+- **Enemy placement:** Generated enemy spawn points must be clear of all solid obstacle footprints and water, with separation between enemies. Never spawn an enemy inside decorative terrain.
 
 ## Asset Conventions
 
 - **Sprite size:** Player 16 × 24; enemies 16 × 16 or 24 × 24; tiles 16 × 16.
 - **Placeholder style:** Colored blocks with 1-pixel outlines, readable silhouettes, no gradients.
 - **Palette:** 16-bit SNES-like; user art keeps the same structure and filenames.
+- **Cover art:** `assets/art/cover.png` is the canonical cover image and appears on the main menu and near the top of `README.md`.
 - **Source files:** Store working files (XCF, PSD, Aseprite, etc.) in `assets/src/` and export to `assets/art/` as PNG, WEBP, or SVG for Godot.
 - **Runtime formats:** Godot cannot import XCF/PSD/Aseprite directly. Use PNG/WEBP for sprites, SVG for vector UI.
 - **Audio:** Placeholder SFX can be short generated beeps/boops; music is optional in the vertical slice.
@@ -136,3 +142,6 @@ This keeps input centralized and version-friendly in one script.
 5. Bramble Lord boss
 6. Forest Bow secondary weapon + switch puzzle
 7. Save/load and main menu
+8. Reusable enemy loot drops with a 25% health-drop chance
+9. Biome-specific mixed enemy populations using blobs, bats, snakes, skeletons, and sandworms
+10. Cover-art presentation on the main menu and README

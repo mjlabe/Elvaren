@@ -1,14 +1,16 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/bramble_lord.gd" id="1_bramble"]
 [ext_resource type="PackedScene" path="res://scenes/props/maiden.tscn" id="2_maiden"]
+[ext_resource type="Script" path="res://scripts/components/health_dropper.gd" id="3_dropper"]
+[ext_resource type="PackedScene" path="res://scenes/props/health_pickup.tscn" id="4_health"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_boss"]
 size = Vector2(24, 24)
 
 [node name="BrambleLord" type="CharacterBody2D" groups=["enemy"]]
 collision_layer = 4
-collision_mask = 3
+collision_mask = 7
 motion_mode = 1
 script = ExtResource("1_bramble")
 maiden_scene = ExtResource("2_maiden")
@@ -18,3 +20,8 @@ scale = Vector2(0.3, 0.3)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_boss")
+
+[node name="HealthDropper" type="Node" parent="."]
+script = ExtResource("3_dropper")
+drop_chance = 0.25
+pickup_scene = ExtResource("4_health")

@@ -6,7 +6,9 @@ extends CharacterBody2D
 @export var maiden_scene: PackedScene
 
 @onready var anim_sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var health_dropper: HealthDropper = $HealthDropper
 
+const MOVEMENT_COLLISION_MASK: int = (1 << 0) | (1 << 1) | (1 << 2)
 const SHEET_PATH: String = "res://assets/art/enemies/balmer-andromalius-57x88-alpha.png"
 const FRAME_SIZE: Vector2i = Vector2i(57, 88)
 const GRID_COLS: int = 8
@@ -23,6 +25,7 @@ func _ready() -> void:
 		queue_free()
 		return
 	motion_mode = MOTION_MODE_FLOATING
+	collision_mask = MOVEMENT_COLLISION_MASK
 	anim_sprite.sprite_frames = _build_sprite_frames()
 	anim_sprite.play("idle")
 	_target = _find_player()
@@ -58,6 +61,7 @@ func take_damage(amount: int, _source: Vector2, _knockback: float) -> void:
 	health -= amount
 	if health <= 0:
 		GameState.set_flag("boss_bramble_lord_defeated", true)
+		health_dropper.try_drop(global_position, get_parent())
 		_spawn_maiden()
 		queue_free()
 		return
