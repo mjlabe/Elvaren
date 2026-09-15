@@ -145,3 +145,29 @@ This keeps input centralized and version-friendly in one script.
 8. Reusable enemy loot drops with a 25% health-drop chance
 9. Biome-specific mixed enemy populations using blobs, bats, snakes, skeletons, and sandworms
 10. Cover-art presentation on the main menu and README
+
+## Overworld Expansion Roadmap
+
+1. **Thornveil** — forest kingdom; current vertical-slice region and forest castle.
+2. **Sunglass Dunes** — desert kingdom with sandstorms, ruins, and a desert castle.
+3. **Aqualis Reach** — water kingdom with rivers, islands, flooded routes, and a water castle.
+4. **Skyrend Heights** — sky kingdom with elevated paths, wind hazards, and a sky castle.
+5. **Frostcrown** — ice kingdom with frozen terrain, sliding routes, and an ice castle.
+6. **Stoneheart Peaks** — mountain kingdom with cliffs, caves, vertical routes, and a mountain castle.
+7. **Cinderwake** — fire kingdom with volcanic terrain, lava hazards, and a fire castle.
+8. **Umbral North** — shadow kingdom containing the northern citadel, the main ghoul, and the captive princess.
+
+### Planned Region Requirements
+
+- Each kingdom occupies a visually and mechanically distinct overworld region and contains one themed castle dungeon.
+- Every region after Thornveil is protected by a crystal-gated barrier tied to progression from the previous kingdom.
+- Approaching a locked barrier displays: `You shall not pass until you have the crystal of <region>.`
+- Inhabited regions include houses, villages, residents, and useful services.
+- Every castle has a themed exterior approach and a unique item- or environment-based entry puzzle.
+- Castle entry puzzles must foreshadow the region's dungeon mechanics without duplicating the dungeon's primary puzzle.
+- These roadmap items remain planned work and should not be implemented until the user authorizes the corresponding phase.
+- Enemies will be themed by region (sand worm in desert, fire blob in fire kingdom, etc.) and will have color themes based on that as well (gray / white tinit in winter, etc.).
+
+### Transition Safety Rule
+
+- Area exits begin with monitoring disabled and activate only after player relocation has reached the physics server. This prevents stale edge overlaps from disabling the same directional exit in the next screen.

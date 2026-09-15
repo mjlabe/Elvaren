@@ -243,6 +243,7 @@ func _load_area(coords: Vector2i, from_direction: Vector2i) -> void:
 		elif from_direction.y != 0:
 			spawn_position.x = clampf(previous_position.x, 40.0, AREA_WIDTH - 40.0)
 	_player.global_position = spawn_position
+	_current_area.activate_exits_after_delay()
 	PlayerData.position = spawn_position
 	PlayerData.world_area = coords
 	GameState.set_flag("visited_%d_%d" % [coords.x, coords.y], true)

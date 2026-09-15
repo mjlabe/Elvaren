@@ -7,6 +7,7 @@ const SCREEN_SIZE: Vector2 = Vector2(384, 288)
 const TILE_SIZE: int = 16
 const EXIT_SIZE: float = 64.0
 const EDGE_THICKNESS: float = 16.0
+const EXIT_ACTIVATION_DELAY: float = 0.05
 const GROUND_LIGHTEN: float = 0.035
 
 var grid_position: Vector2i = Vector2i.ZERO
@@ -204,6 +205,14 @@ func _spawn_enemies() -> void:
 			continue
 		enemy.position = enemy_data.get("position", SCREEN_SIZE / 2.0)
 		get_node("Actors").add_child(enemy)
+
+
+func activate_exits_after_delay() -> void:
+	await get_tree().create_timer(EXIT_ACTIVATION_DELAY).timeout
+	if not is_inside_tree():
+		return
+	for area_exit in _exits:
+		area_exit.monitoring = area_exit.enabled
 
 
 func _on_player_exited(direction: Vector2i) -> void:
