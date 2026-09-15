@@ -1,6 +1,6 @@
 # Elvaren: Crystals of the Fallen Realms
 
-![Elvaren: Crystals of the Fallen Realms cover art](assets/art/cover.png)
+![Elvaren: Crystals of the Fallen Realms cover art](assets/art/cover.jpg)
 
 A top-down 16-bit action / puzzle / RPG inspired by... you know. Built with **Godot 4.x** and **GDScript**.
 
