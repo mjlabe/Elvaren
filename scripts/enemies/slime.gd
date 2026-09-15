@@ -13,7 +13,7 @@ extends CharacterBody2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var health_dropper: HealthDropper = $HealthDropper
 
-const MOVEMENT_COLLISION_MASK: int = (1 << 0) | (1 << 1) | (1 << 2)
+const MOVEMENT_COLLISION_MASK: int = (1 << 0) | (1 << 2)
 const FRAME_SIZE: Vector2i = Vector2i(64, 64)
 const IDLE_SHEET: String = "res://assets/art/enemies/slime1/Idle/Slime1_Idle_full.png"
 const WALK_SHEET: String = "res://assets/art/enemies/slime1/Walk/Slime1_Walk_full.png"

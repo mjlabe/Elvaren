@@ -11,7 +11,7 @@ height = 10.0
 
 [node name="Bat" type="CharacterBody2D" groups=["enemy", "bat"]]
 collision_layer = 4
-collision_mask = 7
+collision_mask = 5
 motion_mode = 1
 script = ExtResource("1_enemy")
 sprite_sheet = ExtResource("2_texture")

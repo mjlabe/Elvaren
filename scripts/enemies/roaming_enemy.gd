@@ -23,7 +23,7 @@ extends CharacterBody2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var health_dropper: HealthDropper = $HealthDropper
 
-const MOVEMENT_COLLISION_MASK: int = (1 << 0) | (1 << 1) | (1 << 2)
+const MOVEMENT_COLLISION_MASK: int = (1 << 0) | (1 << 2)
 const CONTACT_DISTANCE: float = 16.0
 const CONTACT_COOLDOWN: float = 0.8
 const HURT_DURATION: float = 0.14

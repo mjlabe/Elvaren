@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/dungeons/thornveil_room_1.gd" id="1_room"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_player"]
@@ -7,7 +7,6 @@
 [ext_resource type="PackedScene" path="res://scenes/props/item_pickup.tscn" id="5_pickup"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/bramble_lord.tscn" id="6_bramble"]
 [ext_resource type="PackedScene" path="res://scenes/props/dungeon_entrance.tscn" id="7_entrance"]
-[ext_resource type="PackedScene" path="res://scenes/world/world.tscn" id="8_world"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_h"]
 size = Vector2(384, 16)
@@ -68,7 +67,7 @@ position = Vector2(312, 144)
 
 [node name="DungeonExit" parent="." instance=ExtResource("7_entrance")]
 position = Vector2(192, 264)
-destination_scene = ExtResource("8_world")
+destination_path = "res://scenes/world/world.tscn"
 destination_position = Vector2(304, 184)
 
 [node name="Player" parent="." instance=ExtResource("2_player")]

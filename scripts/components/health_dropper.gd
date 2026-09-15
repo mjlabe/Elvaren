@@ -21,5 +21,5 @@ func try_drop(drop_position: Vector2, drop_parent: Node) -> bool:
 		pickup.position = (drop_parent as Node2D).to_local(drop_position)
 	else:
 		pickup.position = drop_position
-	drop_parent.add_child(pickup)
+	drop_parent.call_deferred("add_child", pickup)
 	return true

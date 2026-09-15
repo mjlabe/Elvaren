@@ -8,7 +8,7 @@ extends CharacterBody2D
 @onready var anim_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var health_dropper: HealthDropper = $HealthDropper
 
-const MOVEMENT_COLLISION_MASK: int = (1 << 0) | (1 << 1) | (1 << 2)
+const MOVEMENT_COLLISION_MASK: int = (1 << 0) | (1 << 2)
 const SHEET_PATH: String = "res://assets/art/enemies/balmer-andromalius-57x88-alpha.png"
 const FRAME_SIZE: Vector2i = Vector2i(57, 88)
 const GRID_COLS: int = 8

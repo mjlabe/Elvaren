@@ -102,7 +102,7 @@ res://
 - **Generation:** Overworld regions are deterministic from a fixed seed. Biomes, water, roads, obstacles, and enemy positions remain stable across visits and saved games; story landmarks are authored prefabs layered into generated regions.
 - **Enemy variety:** Every overworld screen contains a deterministic mixture of at least three enemy archetypes rather than a single repeated type. Meadows use blobs, bats, and snakes; forests add skeletons; deserts emphasize sandworms, snakes, and skeletons; coasts mix blobs, bats, and skeletons; swamps mix blobs, snakes, bats, and skeletons; northern snow/highland regions emphasize skeletons and bats.
 - **Enemy architecture:** Shared wandering, chase, contact-damage, knockback, death, and health-drop behavior belongs in `RoamingEnemy`. Individual enemy scenes configure sprite-sheet layout and combat tuning.
-- **Enemy collision:** Every enemy archetype, including flying silhouettes such as bats, collides with the World and Player physics layers. Enemies cannot pass through trees, rocks, shrubs, water boundaries, walls, closed doors, or one another.
+- **Enemy collision:** Every enemy archetype, including flying silhouettes such as bats, collides with the World and Enemy physics layers. Enemies cannot pass through trees, rocks, shrubs, water boundaries, walls, closed doors, or one another. Player and enemy movement bodies overlap instead of hard-blocking; contact damage and knockback handle combat so crowds cannot trap the player.
 - **Enemy placement:** Generated enemy spawn points must be clear of all solid obstacle footprints and water, with separation between enemies. Never spawn an enemy inside decorative terrain.
 
 ## Asset Conventions
