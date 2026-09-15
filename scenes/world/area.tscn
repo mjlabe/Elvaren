@@ -1,0 +1,125 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/world_area.gd" id="1_world_area"]
+[ext_resource type="Script" path="res://scripts/components/area_exit.gd" id="2_area_exit"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_h"]
+size = Vector2(384, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_v"]
+size = Vector2(16, 288)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_exit_h"]
+size = Vector2(64, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_exit_v"]
+size = Vector2(8, 64)
+
+[node name="WorldArea" type="Node2D" groups=["world_area"]]
+script = ExtResource("1_world_area")
+
+[node name="Walls" type="Node" parent="."]
+
+[node name="WallTop" type="StaticBody2D" parent="Walls"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WallTop"]
+position = Vector2(192, -8)
+shape = SubResource("RectangleShape2D_wall_h")
+
+[node name="WallBottom" type="StaticBody2D" parent="Walls"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WallBottom"]
+position = Vector2(192, 296)
+shape = SubResource("RectangleShape2D_wall_h")
+
+[node name="WallLeft" type="StaticBody2D" parent="Walls"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WallLeft"]
+position = Vector2(-8, 144)
+shape = SubResource("RectangleShape2D_wall_v")
+
+[node name="WallRight" type="StaticBody2D" parent="Walls"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WallRight"]
+position = Vector2(392, 144)
+shape = SubResource("RectangleShape2D_wall_v")
+
+[node name="Obstacles" type="Node" parent="."]
+
+[node name="Actors" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Exits" type="Node" parent="."]
+
+[node name="ExitTop" type="Area2D" parent="Exits" groups=["area_exit"]]
+collision_layer = 0
+collision_mask = 2
+monitoring = true
+monitorable = false
+script = ExtResource("2_area_exit")
+direction = Vector2i(0, -1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Exits/ExitTop"]
+position = Vector2(192, -4)
+shape = SubResource("RectangleShape2D_exit_h")
+
+[node name="ExitBottom" type="Area2D" parent="Exits" groups=["area_exit"]]
+collision_layer = 0
+collision_mask = 2
+monitoring = true
+monitorable = false
+script = ExtResource("2_area_exit")
+direction = Vector2i(0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Exits/ExitBottom"]
+position = Vector2(192, 292)
+shape = SubResource("RectangleShape2D_exit_h")
+
+[node name="ExitLeft" type="Area2D" parent="Exits" groups=["area_exit"]]
+collision_layer = 0
+collision_mask = 2
+monitoring = true
+monitorable = false
+script = ExtResource("2_area_exit")
+direction = Vector2i(-1, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Exits/ExitLeft"]
+position = Vector2(-4, 144)
+shape = SubResource("RectangleShape2D_exit_v")
+
+[node name="ExitRight" type="Area2D" parent="Exits" groups=["area_exit"]]
+collision_layer = 0
+collision_mask = 2
+monitoring = true
+monitorable = false
+script = ExtResource("2_area_exit")
+direction = Vector2i(1, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Exits/ExitRight"]
+position = Vector2(388, 144)
+shape = SubResource("RectangleShape2D_exit_v")
+
+[node name="Spawns" type="Node" parent="."]
+
+[node name="SpawnDefault" type="Marker2D" parent="Spawns"]
+position = Vector2(192, 144)
+
+[node name="SpawnLeft" type="Marker2D" parent="Spawns"]
+position = Vector2(24, 144)
+
+[node name="SpawnRight" type="Marker2D" parent="Spawns"]
+position = Vector2(360, 144)
+
+[node name="SpawnTop" type="Marker2D" parent="Spawns"]
+position = Vector2(192, 24)
+
+[node name="SpawnBottom" type="Marker2D" parent="Spawns"]
+position = Vector2(192, 264)

@@ -1,0 +1,13 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/world/area.tscn" id="2_area"]
+[ext_resource type="Script" path="res://scripts/world/world.gd" id="3_world"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/slime.tscn" id="4_slime"]
+
+[node name="World" type="Node2D"]
+script = ExtResource("3_world")
+player_scene = ExtResource("1_player")
+area_scene = ExtResource("2_area")
+enemy_scene = ExtResource("4_slime")
+start_area = Vector2i(3, 6)

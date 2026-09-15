@@ -1,0 +1,42 @@
+; Engine Configuration File.
+; Godot version: 4.3
+
+[application]
+config/name="Elvaren: Crystals of the Fallen Realms"
+config/description="Top-down 16-bit action-puzzle RPG"
+run/main_scene="res://scenes/ui/main_menu.tscn"
+config/features=PackedStringArray("4.3", "GL Compatibility")
+config/icon="res://icon.svg"
+
+[display]
+window/size/viewport_width=384
+window/size/viewport_height=288
+window/size/window_width_override=1152
+window/size/window_height_override=864
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+textures/canvas_textures/default_texture_filter=0
+
+[autoload]
+InputEvents="*res://autoload/input_events.gd"
+GameState="*res://autoload/game_state.gd"
+PlayerData="*res://autoload/player_data.gd"
+ItemDatabase="*res://autoload/item_database.gd"
+SaveManager="*res://autoload/save_manager.gd"
+SceneManager="*res://autoload/scene_manager.gd"
+AudioManager="*res://autoload/audio_manager.gd"
+DialogManager="*res://autoload/dialog_manager.gd"
+HUD="*res://scenes/ui/hud.tscn"
+
+[layer_names]
+2d_physics/layer_1="World"
+2d_physics/layer_2="Player"
+2d_physics/layer_3="Enemy"
+2d_physics/layer_4="PlayerHitbox"
+2d_physics/layer_5="EnemyHitbox"
+2d_physics/layer_6="Interaction"
+2d_physics/layer_7="Projectile"
+2d_physics/layer_8="Item"

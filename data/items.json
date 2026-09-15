@@ -1,0 +1,36 @@
+{
+  "items": [
+    {
+      "id": "sword",
+      "name": "Wooden Sword",
+      "description": "The hero's main weapon. A simple, reliable blade.",
+      "max_stack": 1,
+      "is_key": false,
+      "is_secondary_weapon": false
+    },
+    {
+      "id": "bow",
+      "name": "Forest Bow",
+      "description": "A short bow that can fire arrows and hit distant switches.",
+      "max_stack": 1,
+      "is_key": false,
+      "is_secondary_weapon": true
+    },
+    {
+      "id": "crystal_thornveil",
+      "name": "Crystal of Thorns",
+      "description": "Rescued from Thornveil. Opens the gate to the Dunes.",
+      "max_stack": 1,
+      "is_key": true,
+      "is_secondary_weapon": false
+    },
+    {
+      "id": "crystal_dunes",
+      "name": "Crystal of the Dunes",
+      "description": "Rescued from Sunscorched Dunes. Opens the gate to Aqualis.",
+      "max_stack": 1,
+      "is_key": true,
+      "is_secondary_weapon": false
+    }
+  ]
+}
